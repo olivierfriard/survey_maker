@@ -167,13 +167,13 @@ class App(QMainWindow):
         if result == QMessageBox.No:
             return
 
-        #try:
-        with open(self.windowTitle() + ".tsv", "w") as f_out:
-            for idx in sorted(self.pages.keys()):
-                if "results" in self.pages[idx]:
-                    f_out.write("{}\t{}\n".format(self.pages[idx]["name"], self.pages[idx]["results"]))
-        #except:
-        #    QMessageBox.critical(self, "Errore", "I dati non sono stati salvati")
+        try:
+            with open(self.windowTitle() + ".tsv", "w") as f_out:
+                for idx in sorted(self.pages.keys()):
+                    if "results" in self.pages[idx]:
+                        f_out.write("{}\t{}\n".format(self.pages[idx]["name"], self.pages[idx]["results"]))
+        except:
+            QMessageBox.critical(self, "Errore", "I dati non sono stati salvati")
 
         try:
             with open(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv'), "a") as f_out:
