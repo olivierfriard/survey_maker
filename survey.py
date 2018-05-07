@@ -110,7 +110,10 @@ class App(QMainWindow):
                 self.tabs[-1].setLayout(layout)
 
             if self.pages[i]["type"] == "closed":
+                self.setStyleSheet("QComboBox { min-height: 40px; min-width: 60px; }" "QComboBox QAbstractItemView::item { min-height: 40px; min-width: 60px; }")
                 cb = QComboBox()
+                
+                #cb.view().setMinimumHeight(240)
                 cb.setStyleSheet("font-size:{}px".format(self.font_size))
                 cb.addItems(self.pages[i]["choices"])
                 self.widgets.append(cb)
