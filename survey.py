@@ -10,11 +10,12 @@ import time
 import datetime
 import json
 import pathlib
+import subprocess
 from PyQt5.QtCore import QUrl, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, QLineEdit, QFrame, QComboBox, QMessageBox,
                              QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
 
-WINDOWS_VLC_PATH = r'"c:\Program Files\VideoLAN\VLC\vlc.exe" --no-osd -f --play-and-exit '
+WINDOWS_VLC_PATH = "c:\\Program Files\\VideoLAN\\VLC\\vlc.exe --no-osd -f --play-and-exit "
 
 LINUX_VLC_PATH = "cvlc  --no-osd -f --play-and-exit "
 
@@ -250,13 +251,19 @@ class App(QMainWindow):
             
             if sys.platform.startswith("linux"):
                 vlc_path = LINUX_VLC_PATH
+
             if sys.platform.startswith("win"):
                 vlc_path = WINDOWS_VLC_PATH
+                subprocess.call(["""{vlc_path} {beep} "{video}" {beep}""".format(vlc_path=vlc_path,
+                                                                      video=self.pages[self.position]["path"],
+                                                                      beep="beep.wav" if "beep" in self.pages[self.position] and self.pages[self.position]["beep"] == "true" else "")])
             
             
+            '''
             os.system("""{vlc_path} {beep} "{video}" {beep}""".format(vlc_path=vlc_path,
                                                                       video=self.pages[self.position]["path"],
                                                                       beep="beep.wav" if "beep" in self.pages[self.position] and self.pages[self.position]["beep"] == "true" else ""))
+            '''
 
 
 if __name__ == '__main__':
