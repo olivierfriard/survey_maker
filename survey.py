@@ -258,5 +258,6 @@ if __name__ == '__main__':
             sys. exit()
     
     app = QApplication(sys.argv)
+    app.setApplicationDisplayName(SURVEY_CONFIG_FILE)
     ex = App()
     sys.exit(app.exec_())
