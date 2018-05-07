@@ -20,7 +20,7 @@ LINUX_VLC_PATH = "cvlc  --no-osd -f --play-and-exit "
 
 
 def date_iso():
-    return datetime.datetime.now().isoformat().split(".")[0].replace("T", "_")
+    return datetime.datetime.now().isoformat().split(".")[0].replace("T", "_").replace(":", "")
 
 
 class App(QMainWindow):
