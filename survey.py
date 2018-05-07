@@ -9,11 +9,10 @@ import sys
 import time
 import datetime
 import json
+import pathlib
 from PyQt5.QtCore import QUrl, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, QLineEdit, QFrame, QComboBox, QMessageBox,
                              QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
-
-ALL_RESULTS_FILE = "all_results.tsv"
 
 def date_iso():
     return datetime.datetime.now().isoformat().split(".")[0].replace("T", "_")
@@ -23,7 +22,7 @@ class App(QMainWindow):
  
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Test attenzione")
+        self.setWindowTitle("")
 
         self.font_size = int(app.desktop().screenGeometry().height() / 1200 * 36)
 
@@ -34,9 +33,10 @@ class App(QMainWindow):
         for idx in dd.keys():
             self.pages[int(idx)] = dd[idx]
 
-        if not os.path.isfile(ALL_RESULTS_FILE):
+        # create results file
+        if not os.path.isfile(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv')):
             try:
-                with open(ALL_RESULTS_FILE, "w") as f_out:
+                with open(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv'), "w") as f_out:
                     out = "Id\t"
                     for idx in sorted(self.pages.keys()):
                         if "text" not in self.pages[idx]:
@@ -170,7 +170,7 @@ class App(QMainWindow):
             QMessageBox.critical(self, "Errore", "I dati non sono stati salvati")
 
         try:
-            with open(ALL_RESULTS_FILE, "a") as f_out:
+            with open(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv'), "a") as f_out:
                 out = self.windowTitle() + "\t"
                 for idx in sorted(self.pages.keys()):
                     if "results" in self.pages[idx]:
@@ -178,7 +178,7 @@ class App(QMainWindow):
                 out += "\n"
                 f_out.write(out)
         except:
-            QMessageBox.critical(self, "Errore", "I dati non sono stati salvati in {}".format(ALL_RESULTS_FILE))
+            QMessageBox.critical(self, "Errore", "I dati non sono stati salvati in {}".format(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv')))
 
         self.close()
 
