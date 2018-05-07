@@ -15,9 +15,9 @@ from PyQt5.QtCore import QUrl, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, QLineEdit, QFrame, QComboBox, QMessageBox,
                              QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
 
-WINDOWS_VLC_PATH = "c:\\Program Files\\VideoLAN\\VLC\\vlc.exe --no-osd -f --play-and-exit "
+WINDOWS_VLC_PATH = '""c:\\Program Files\\VideoLAN\\VLC\\vlc.exe" --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}""'
 
-LINUX_VLC_PATH = "cvlc  --no-osd -f --play-and-exit "
+LINUX_VLC_PATH = 'cvlc  --no-osd -f --play-and-exit  --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}" '
 
 
 def date_iso():
@@ -167,13 +167,13 @@ class App(QMainWindow):
         if result == QMessageBox.No:
             return
 
-        try:
-            with open(self.windowTitle() + ".tsv", "w") as f_out:
-                for idx in sorted(self.pages.keys()):
-                    if "results" in self.pages[idx]:
-                        f_out.write("{}\t{}\n".format(self.pages[idx]["name"], self.pages[idx]["results"]))
-        except:
-            QMessageBox.critical(self, "Errore", "I dati non sono stati salvati")
+        #try:
+        with open(self.windowTitle() + ".tsv", "w") as f_out:
+            for idx in sorted(self.pages.keys()):
+                if "results" in self.pages[idx]:
+                    f_out.write("{}\t{}\n".format(self.pages[idx]["name"], self.pages[idx]["results"]))
+        #except:
+        #    QMessageBox.critical(self, "Errore", "I dati non sono stati salvati")
 
         try:
             with open(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv'), "a") as f_out:
@@ -251,19 +251,15 @@ class App(QMainWindow):
             
             if sys.platform.startswith("linux"):
                 vlc_path = LINUX_VLC_PATH
+                
 
             if sys.platform.startswith("win"):
                 vlc_path = WINDOWS_VLC_PATH
-                subprocess.call(["""{vlc_path} {beep} "{video}" {beep}""".format(vlc_path=vlc_path,
-                                                                      video=self.pages[self.position]["path"],
-                                                                      beep="beep.wav" if "beep" in self.pages[self.position] and self.pages[self.position]["beep"] == "true" else "")])
-            
-            
-            '''
-            os.system("""{vlc_path} {beep} "{video}" {beep}""".format(vlc_path=vlc_path,
-                                                                      video=self.pages[self.position]["path"],
-                                                                      beep="beep.wav" if "beep" in self.pages[self.position] and self.pages[self.position]["beep"] == "true" else ""))
-            '''
+
+            cmd = vlc_path.format(video=self.pages[self.position]["path"],
+                                  beep="beep.wav" if "beep" in self.pages[self.position] and self.pages[self.position]["beep"] == "true" else "")
+            print(cmd)
+            os.system(cmd)
 
 
 if __name__ == '__main__':
