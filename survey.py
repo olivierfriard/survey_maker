@@ -30,8 +30,6 @@ import time
 import datetime
 import json
 import pathlib
-import subprocess
-from PyQt5.QtCore import QUrl, QTimer
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, QLineEdit, QFrame, QComboBox, QMessageBox,
                              QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
 
