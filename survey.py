@@ -38,7 +38,7 @@ __version_date__ = "2018-05-08"
 
 if sys.platform.startswith("win"):
     if os.path.isfile("survey.config"):
-        settings = QSettings(iniFilePath, QSettings.IniFormat)
+        settings = QSettings("survey.config", QSettings.IniFormat)
         vlc_path = settings.value("VLC_path")
         
         print("vlc path:", vlc_path)
