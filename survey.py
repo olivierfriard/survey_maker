@@ -36,9 +36,20 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, Q
 __version__ = "0.0.1"
 __version_date__ = "2018-05-08"
 
-WINDOWS_VLC_PATH = '""c:\\Program Files\\VideoLAN\\VLC\\vlc.exe" --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}""'
+if sys.platform.startswith("win"):
+    if os.path.isfile("survey.config"):
+        settings = QSettings(iniFilePath, QSettings.IniFormat)
+        vlc_path = settings.value("VLC_path")
+        
+        print(vlc_path)
 
-LINUX_VLC_PATH = 'cvlc  --no-osd -f --play-and-exit  --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}" '
+        VLC_CMD = '""###VLC_PATH###" --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}""'.replace("###VLC_PATH###", vlc_path)
+    else:
+
+        VLC_CMD = '""c:\\Program Files\\VideoLAN\\VLC\\vlc.exe" --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}""'
+
+if sys.platform.startswith("linux"):
+    VLC_CMD = 'cvlc  --no-osd -f --play-and-exit  --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}" '
 
 
 def date_iso():
@@ -273,15 +284,9 @@ class App(QMainWindow):
         if self.pages[self.position]["type"] == "video":
             self.pages[self.position]["results"] = self.pages[self.position]["path"]
             
-            if sys.platform.startswith("linux"):
-                vlc_path = LINUX_VLC_PATH
-                
 
-            if sys.platform.startswith("win"):
-                vlc_path = WINDOWS_VLC_PATH
-
-            cmd = vlc_path.format(video=self.pages[self.position]["path"],
-                                  beep="beep.wav" if "beep" in self.pages[self.position] and self.pages[self.position]["beep"] == "true" else "")
+            cmd = VLC_CMD.format(video=self.pages[self.position]["path"],
+                                 beep="beep.wav" if "beep" in self.pages[self.position] and self.pages[self.position]["beep"] == "true" else "")
             print(cmd)
             os.system(cmd)
 
