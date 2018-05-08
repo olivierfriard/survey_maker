@@ -31,7 +31,7 @@ import datetime
 import json
 import pathlib
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, QLineEdit, QFrame, QComboBox, QMessageBox,
-                             QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
+                             QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox, QSettings)
 
 __version__ = "0.0.1"
 __version_date__ = "2018-05-08"
