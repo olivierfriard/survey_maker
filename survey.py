@@ -33,6 +33,9 @@ import pathlib
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, QLineEdit, QFrame, QComboBox, QMessageBox,
                              QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
 
+__version__ = "0.0.1"
+__version_date__ = "2018-05-08"
+
 WINDOWS_VLC_PATH = '""c:\\Program Files\\VideoLAN\\VLC\\vlc.exe" --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}""'
 
 LINUX_VLC_PATH = 'cvlc  --no-osd -f --play-and-exit  --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}" '
