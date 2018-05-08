@@ -3,7 +3,7 @@
 "1": {"type": "open_int", "name": "age", "question": "Age", "limits": [0, 120]},
 "2": {"type": "closed", "name": "sex", "question": "Sex", "choices": ["M", "F"]},
 "3": {"type": "text", "text": "Now a <b>video</b> will be played..."},
-"4": {"type": "video", "name": "video.avi", "path": "video.avi", "beep": "true"},
+"4": {"type": "video", "name": "video.avi", "path": "video.avi", "beep": "beep.wav"},
 "5": {"type": "closed", "name": "video quality","question": "Did you enjoyed the video?", "choices": ["", "Yes", "No"]},
 "6": {"type": "end"}
 }

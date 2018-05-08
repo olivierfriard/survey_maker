@@ -141,9 +141,16 @@ class App(QMainWindow):
                 self.tabs[-1].setLayout(layout)
 
             if self.pages[i]["type"] == "video":
+
                 if not os.path.isfile(self.pages[i]["path"]):
-                    QMessageBox.critical(self, "Errore", "Il video {} non è stato trovato".format(self.pages[i]["path"]))
-                    sys.exit()
+                    video_path = PROJECT_DIR / pathlib.Path(self.pages[i]["path"])
+                    if video_path.exists():
+                        video_path = str(video_path)
+                    else:
+                        QMessageBox.critical(self, "Errore", "Il video {} non è stato trovato".format(self.pages[i]["path"]))
+                        sys.exit()
+                    self.pages[i]["path"] = video_path
+
                 self.widgets.append("video")
 
             if self.pages[i]["type"] == "end":
@@ -188,14 +195,16 @@ class App(QMainWindow):
         if result == QMessageBox.No:
             return
 
+        # single survey
         try:
-            with open(self.windowTitle() + ".tsv", "w") as f_out:
+            with open(str(PROJECT_DIR / pathlib.Path(self.windowTitle() + ".tsv")), "w") as f_out:
                 for idx in sorted(self.pages.keys()):
                     if "results" in self.pages[idx]:
                         f_out.write("{}\t{}\n".format(self.pages[idx]["name"], self.pages[idx]["results"]))
         except:
             QMessageBox.critical(self, "Errore", "I dati non sono stati salvati")
 
+        # all results
         try:
             with open(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv'), "a") as f_out:
                 out = self.windowTitle() + "\t"
@@ -268,11 +277,19 @@ class App(QMainWindow):
         self.tw.setCurrentIndex(self.position)
 
         if self.pages[self.position]["type"] == "video":
-            self.pages[self.position]["results"] = self.pages[self.position]["path"]
-            
+            self.pages[self.position]["results"] = os.path.basename(self.pages[self.position]["path"])
 
+            beep_path = ""
+            if "beep" in self.pages[self.position] and self.pages[self.position]["beep"]:
+                beep_path = self.pages[self.position]["beep"]
+                if not os.path.isfile(beep_path):
+                    beep_path = PROJECT_DIR / pathlib.Path(beep_path)
+                    if beep_path.exists():
+                        beep_path = str(beep_path)
+                    else:
+                        beep_path = ""
             cmd = VLC_CMD.format(video=self.pages[self.position]["path"],
-                                 beep="beep.wav" if "beep" in self.pages[self.position] and self.pages[self.position]["beep"] == "true" else "")
+                                 beep=beep_path)
             print(cmd)
             os.system(cmd)
 
@@ -290,7 +307,7 @@ if __name__ == '__main__':
 
     PROJECT_DIR = pathlib.Path(SURVEY_CONFIG_FILE).parent
 
-    if sys.platform.startswith("linux"):
+    if sys.platform.startswith("win"):
         p = PROJECT_DIR / pathlib.Path("survey.config")
         if p.exists():
             settings = QSettings(str(p), QSettings.IniFormat)
