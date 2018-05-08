@@ -41,12 +41,14 @@ if sys.platform.startswith("win"):
         settings = QSettings(iniFilePath, QSettings.IniFormat)
         vlc_path = settings.value("VLC_path")
         
-        print(vlc_path)
+        print("vlc path:", vlc_path)
 
         VLC_CMD = '""###VLC_PATH###" --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}""'.replace("###VLC_PATH###", vlc_path)
     else:
 
         VLC_CMD = '""c:\\Program Files\\VideoLAN\\VLC\\vlc.exe" --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}""'
+        
+    print("VLC CMD", VLC_CMD)
 
 if sys.platform.startswith("linux"):
     VLC_CMD = 'cvlc  --no-osd -f --play-and-exit  --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}" '
