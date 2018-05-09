@@ -33,9 +33,9 @@ import pathlib
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, QLineEdit, QFrame, QComboBox, QMessageBox,
                              QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
 from PyQt5.QtCore import QSettings 
-__version__ = "0.0.2"
-__version_date__ = "2018-05-08"
 
+__version__ = "0.0.3"
+__version_date__ = "2018-05-09"
 
 
 def date_iso():
@@ -53,7 +53,12 @@ class App(QMainWindow):
         self.position = 0
         self.pages = {}
 
-        dd = json.loads(open(SURVEY_CONFIG_FILE).read())
+        try:
+            dd = json.loads(open(SURVEY_CONFIG_FILE).read())
+        except:
+            QMessageBox.critical(self, "Errore", "Il file {} non è corretto.".format(SURVEY_CONFIG_FILE))
+            sys.exit()
+            
         for idx in dd.keys():
             self.pages[int(idx)] = dd[idx]
 
@@ -307,6 +312,7 @@ if __name__ == '__main__':
 
     PROJECT_DIR = pathlib.Path(SURVEY_CONFIG_FILE).parent
 
+    # check for VLC path
     if sys.platform.startswith("win"):
         p = PROJECT_DIR / pathlib.Path("survey.config")
         if p.exists():
