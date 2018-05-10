@@ -32,7 +32,7 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, Q
                              QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
 from PyQt5.QtCore import QSettings 
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __version_date__ = "2018-05-10"
 
 
@@ -281,7 +281,7 @@ class App(QMainWindow):
 
         # mask previous and net buttons
         if self.pages[self.position]["type"] == "end":
-            self.start_button.setVisible(False)
+            #self.start_button.setVisible(False)
             self.next_button.setVisible(False)
 
 
