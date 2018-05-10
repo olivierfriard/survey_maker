@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
 
-
-
 Survey maker
 Copyright 2018 Olivier Friard
 
@@ -34,8 +32,8 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QInputDialog, Q
                              QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTabWidget, QFormLayout, QSpinBox)
 from PyQt5.QtCore import QSettings 
 
-__version__ = "0.0.3"
-__version_date__ = "2018-05-09"
+__version__ = "0.0.4"
+__version_date__ = "2018-05-10"
 
 
 def date_iso():
@@ -201,17 +199,26 @@ class App(QMainWindow):
             return
 
         # single survey
+        single_tests_dir = PROJECT_DIR / pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.single_tests')
+        if not os.path.isdir(single_tests_dir):
+            os.mkdir(single_tests_dir)
+        
+        single_file_name = str(single_tests_dir / pathlib.Path(self.windowTitle() + ".tsv"))
         try:
-            with open(str(PROJECT_DIR / pathlib.Path(self.windowTitle() + ".tsv")), "w") as f_out:
+            with open(single_file_name, "w") as f_out:
                 for idx in sorted(self.pages.keys()):
                     if "results" in self.pages[idx]:
                         f_out.write("{}\t{}\n".format(self.pages[idx]["name"], self.pages[idx]["results"]))
         except:
             QMessageBox.critical(self, "Errore", "I dati non sono stati salvati")
 
+        if gdrive_cmd:
+            os.system(gdrive_cmd.format(single_file_name))
+
         # all results
+        all_results_file_name = str(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv'))
         try:
-            with open(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv'), "a") as f_out:
+            with open(all_results_file_name, "a") as f_out:
                 out = self.windowTitle() + "\t"
                 for idx in sorted(self.pages.keys()):
                     if "results" in self.pages[idx]:
@@ -219,9 +226,13 @@ class App(QMainWindow):
                 out += "\n"
                 f_out.write(out)
         except:
-            QMessageBox.critical(self, "Errore", "I dati non sono stati salvati in {}".format(pathlib.Path(SURVEY_CONFIG_FILE).with_suffix('.tsv')))
+            QMessageBox.critical(self, "Errore", "I dati non sono stati salvati in {}".format(all_results_file_name))
+
+        if gdrive_cmd:
+            os.system(gdrive_cmd.format(all_results_file_name))
 
         self.close()
+
 
     def previous(self):
         """
@@ -243,6 +254,7 @@ class App(QMainWindow):
 
         self.tw.setTabEnabled(self.position, True)
         self.tw.setCurrentIndex(self.position)
+
 
     def next(self):
         """
@@ -266,6 +278,12 @@ class App(QMainWindow):
 
         self.tw.setTabEnabled(self.position, False)
         self.position += 1
+
+        # mask previous and net buttons
+        if self.pages[self.position]["type"] == "end":
+            self.start_button.setVisible(False)
+            self.next_button.setVisible(False)
+
 
         if self.position in self.pages:
             if "condition" in self.pages[self.position]:
@@ -302,7 +320,7 @@ class App(QMainWindow):
 if __name__ == '__main__':
     
     if len(sys.argv) == 1:
-        print("The survey configuration file was not found")
+        print("The survey project file was not found")
         sys.exit()
     else:
         SURVEY_CONFIG_FILE = sys.argv[1]
@@ -326,6 +344,14 @@ if __name__ == '__main__':
             VLC_CMD = '""c:\\Program Files\\VideoLAN\\VLC\\vlc.exe" --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}""'
 
         print("VLC CMD", VLC_CMD)
+
+    gdrive_cmd = ""
+    p = PROJECT_DIR / pathlib.Path("survey.config")
+    if p.exists():
+        settings = QSettings(str(p), QSettings.IniFormat)
+        gdrive_cmd = settings.value("google_drive")
+        print("google drive command: {}".format(gdrive_cmd))
+
 
     if sys.platform.startswith("linux"):
         VLC_CMD = 'cvlc  --no-osd -f --play-and-exit  --no-osd -f --play-and-exit "{beep}" "{video}" "{beep}" '
